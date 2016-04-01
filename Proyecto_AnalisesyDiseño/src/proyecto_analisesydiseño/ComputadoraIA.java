@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package proyecto_analisesydiseño;
 
 /**
@@ -12,53 +7,44 @@ package proyecto_analisesydiseño;
  */
 public class ComputadoraIA {
 
-    public static int tiradas = 0;
-    //Raiz del arbol
-    NodoG arbol = new NodoG();
+    public static int tiradas = 0;//variable de tiradas en el juego
+    NodoG arbol = new NodoG();//Raiz del arbol
+    int[] tablero;//Atributos
+    public final int miFICHA = 2;//Mi ficha
 
-    //Atributos
-    int[] tablero;
-
-    //Mi ficha
-    public final int miFICHA = 2;
-
-    //Arboles para los movimientos
+    /**
+     * Arboles para los movimientos
+     */
     class NodoG {
 
-        //Mejor movimiento
-        int mejorMovimiento;
-        //Nodos hijos
-        NodoG nodos[];
-        //Tablero del juego
-        public int tablero[];
-        //Turno de la computadora
-        boolean miTurno = false;
-        //Indice de la pocision
-        int indice;
-        //Ganador
-        int ganador = 0;
+        int mejorMovimiento;//Mejor movimiento        
+        NodoG nodos[];//Nodos hijos       
+        public int tablero[];//Tablero del juego       
+        boolean miTurno = false;//Turno de la computadora       
+        int indice;//Indice de la pocision
+        int ganador = 0;//Ganador
 
-        //Constructor
+        /*Constructor*/
         NodoG() {
             tablero = new int[9];
         }
     }
 
     /**
-     * Metodo que nos devuelve los espacios disponibles
+     * Metodo Verifica si esta ocupado o esta disponible Retorna un int el cual
+     * es el espacio disponible
      *
      * @param tablero
      * @return
      */
     public int movDisponibles(int[] tablero) {
-        int mov = 0;
-
+        int cont = 0;
         for (int i = 0; i < 9; i++) {
             if (tablero[i] == 0) {
-                mov++;
+                cont++;
             }
         }
-        return mov;
+        return cont;
     }
 
     /**
@@ -68,10 +54,9 @@ public class ComputadoraIA {
      * @return
      */
     public int[] posVacias(int[] tablero) {
-        //Creamos el vector con los indices
+        //Creamos el vector con los indices disponibles 
         int[] indices = new int[movDisponibles(tablero)];
         int indice = 0;
-
         //Recorremos y guardamos los indices
         for (int i = 0; i < 9; i++) {
             if (tablero[i] == 0) {
@@ -83,7 +68,7 @@ public class ComputadoraIA {
     }
 
     /**
-     * Clase que recibe el tablero actual
+     * Metodo verifica espacios disponibles y retorna indice del tablero
      *
      * @param tablero
      * @return
@@ -92,15 +77,10 @@ public class ComputadoraIA {
         /*Asignamos el tablero.*/
         this.tablero = tablero;
         tiradas++;
-
         //Copiamos el tablero a nuestro nodo raiz
-        for (int i = 0; i < 9; i++) {
-            this.arbol.tablero[i] = this.tablero[i];
-        }
-
+        System.arraycopy(this.tablero, 0, this.arbol.tablero, 0, 9);
         //Calculamos el mejor movimiento del �rbol, desde las hojas hasta la raiz
         movComputadora(arbol);
-
         //Devolvemos el mejor movimiento
         return arbol.mejorMovimiento;
     }
@@ -111,15 +91,11 @@ public class ComputadoraIA {
      * @param raiz
      */
     public void movComputadora(NodoG raiz) {
-
         //Numero de movimientos disponibles y sus indices en el tablero
         int movimientos = movDisponibles(raiz.tablero);
         int indices[] = posVacias(raiz.tablero);
-        int Max, Min;
-
         //Inicializamos el nodo
         raiz.nodos = new NodoG[movimientos];
-
         //Verificamos si hay un ganador
         int ganador = terminado(raiz.tablero);
         if (ganador == 1) {
@@ -134,45 +110,33 @@ public class ComputadoraIA {
 
             //Creamos los datos de cada hijo
             for (int i = 0; i < movimientos; i++) {
-
                 //Inicializamos los nodos hijos del arbol
                 raiz.nodos[i] = new NodoG();
-
                 //Les pasamos su tablero
-                for (int j = 0; j < 9; j++) {
-                    raiz.nodos[i].tablero[j] = raiz.tablero[j];
-                }
-
+                System.arraycopy(raiz.tablero, 0, raiz.nodos[i].tablero, 0, 9);
                 //Creamos los diferentes movimientos posibles
                 if (raiz.miTurno) {
                     raiz.nodos[i].tablero[indices[i]] = 1;
                 } else {
                     raiz.nodos[i].tablero[indices[i]] = 2;
                 }
-
                 //Cambiamos el turno de los hijos
                 raiz.nodos[i].miTurno = !raiz.miTurno;
-
                 //Guardamos el indice de su movimiento
                 raiz.nodos[i].indice = indices[i];
-
                 movComputadora(raiz.nodos[i]);
-
             }
-
             //Minimax
             if (!raiz.miTurno) {
                 raiz.ganador = Max(raiz);
             } else {
                 raiz.ganador = Min(raiz);
             }
-
         }
-
     }
 
     /**
-     * Metodo que calcula el MAXIMO de los nodos hijos de MIN
+     * Metodo que calcula el MAXIMO de los nodos hijos
      *
      * @param raiz
      * @return
@@ -180,27 +144,25 @@ public class ComputadoraIA {
     public int Max(NodoG raiz) {
         int Max = -111;
         //Maximo para la computadora, buscamos el valor donde gane
-        for (int i = 0; i < raiz.nodos.length; i++) {
+        for (NodoG nodo : raiz.nodos) {
             //Preguntamos por un nodo con un valor alto MAX
-            if (raiz.nodos[i].ganador > Max) {
+            if (nodo.ganador > Max) {
                 //Lo asignamos y pasamos el mejor movimiento a la raiz
-                Max = raiz.nodos[i].ganador;
-                raiz.mejorMovimiento = raiz.nodos[i].indice;
+                Max = nodo.ganador;
+                raiz.mejorMovimiento = nodo.indice;
                 //Terminamos de buscar
                 if (Max == 1) {
                     break;
                 }
             }
         }
-
         //Borramos los nodos
         raiz.nodos = null;
-
         return Max;
     }
 
     /**
-     * Metodo que calcula el MINIMO de los nodos hijos de MAX
+     * Metodo que calcula el MINIMO de los nodos hijos
      *
      * @param raiz
      * @return
@@ -208,31 +170,27 @@ public class ComputadoraIA {
     public int Min(NodoG raiz) {
         int Min = 111;
         //Minimo para el jugador
-        for (int i = 0; i < raiz.nodos.length; i++) {
-            if (raiz.nodos[i].ganador < Min) {
-                Min = raiz.nodos[i].ganador;
-                raiz.mejorMovimiento = raiz.nodos[i].indice;
+        for (NodoG nodo : raiz.nodos) {
+            if (nodo.ganador < Min) {
+                Min = nodo.ganador;
+                raiz.mejorMovimiento = nodo.indice;
                 if (Min == -1) {
                     break;
                 }
             }
         }
-
         //Borramos los nodos
         raiz.nodos = null;
-
         return Min;
     }
 
     /**
-     * Metodo que dice si el juego est� terminado Regresa 0 si nadie gana, 1 si
-     * gana jugador 1 y 2 si gana jugador 2
+     * Metodo que comprueba si gano
      *
      * @param tablero
      * @return
      */
     public int terminado(int[] tablero) {
-        //Comprobamos si el juego termino
         //Filas
         if (tablero[0] == tablero[1] && tablero[0] == tablero[2] && tablero[0] != 0) {
             return tablero[0];
@@ -253,8 +211,6 @@ public class ComputadoraIA {
         } else if (tablero[2] == tablero[4] && tablero[2] == tablero[6] && tablero[2] != 0) {
             return tablero[2];
         }
-
         return 0;
-
     }
 }

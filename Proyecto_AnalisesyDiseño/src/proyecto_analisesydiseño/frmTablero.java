@@ -5,9 +5,9 @@
  */
 package proyecto_analisesydiseño;
 
-import java.sql.ResultSet;
-import java.util.Arrays;
-import javax.swing.JOptionPane;
+import java.sql.ResultSet; //Importacion para guardar registros
+import java.util.Arrays; // Importacion para guardar arregloso
+import javax.swing.JOptionPane; //Importacion para Avisos al usuario
 
 /**
  *
@@ -16,44 +16,32 @@ import javax.swing.JOptionPane;
  */
 public class frmTablero extends javax.swing.JFrame {
 
-    ResultSet resultados;
-    //instancia al menu principal
-    frmMenu menu = new frmMenu();
-    //instancia de base de datos
-    BaseDatos coneccion = Proyecto_AnalisesyDiseño.coneccion;
-    //Instancia de la clase de Fichas
-    Ficha imagen = new Ficha();
-    //Instancia de clase jugador
-    Jugador jugador1, jugador2;
-    //Instancia sin inicializar de computadorasIA
-    ComputadoraIA inteligencia;
-    //Instancia a clase de sonido 
-    Sonidos sonido = new Sonidos();
-    //Tablero
-    int[] tablero = new int[9];
-    //Variable para indicar el turno del jugador
-    int turno = 1;
-    //Variable sirve para saber si el juego termino
-    boolean terminado = false;
-    //Variable que establece si juega contra la computadora
-    boolean CPU = false;
-    //tipo de juego
-    int tipo;
-    //si es empate se activa
-    boolean empate = false;
-    //contadores de victortias
-    int primero, segundo;
+    /*Instancia*/
+    frmMenu menu = new frmMenu();//instancia de frmMenu de Menu
+    BaseDatos coneccion = Proyecto_AnalisesyDiseño.coneccion; //Instancia de la clase BaseDatos para las consultas
+    Ficha imagen = new Ficha();//Instancia de clase Fichas para importacion de imagenes
+    Jugador jugador1, jugador2;//Instancia para los Jugadores y inicializar atributos
+    ComputadoraIA inteligencia;//Instancia a la clase ComputadoraIA
+    Sonidos sonido = new Sonidos();//Instancia a la clase para sonidos
+    /*Variables para inicializar el Juego de 0*/
+    int[] tablero = new int[9];//Tablero del juego
+    int turno = 1;//Variable para indicar el turno del jugador
+    boolean terminado = false;//Variable sirve para saber si el juego termino
+    boolean CPU = false;//Variable que establece si juega contra la computadora 
+    int tipo;//tipo de juego si es de 2 o 1 jugador 
+    boolean empate = false;//si es empate se activa
+    int primero, segundo;//contadores de victortias
+    ResultSet resultados;//Variable para guardar registros de la base de datos
 
     /**
-     * Metodo recibe insformacion de frmJugador Segun su tipo de juego Guarda la
-     * informacion en clase Jugador de cada jugador
+     * Metodo recibe insformacion de frmJugador segun su tipo de juego Guardado,
+     * establece la informacion en clase Jugador
      *
      * @param jugador1
      * @param jugador2
      * @param jugadores
      */
     public void iniciarJuego(String jugador1, String jugador2, int jugadores) {
-        //Creamos los jugadores según el tipo de juego
         //jugar vs jugador
         if (2 == jugadores) {
             this.jugador1 = coneccion.cargar_jugadores(jugador1, 2);
@@ -62,8 +50,8 @@ public class frmTablero extends javax.swing.JFrame {
             //jugadores vs computadora
             this.jugador1 = coneccion.cargar_jugadores(jugador1, 1);
             this.jugador2 = coneccion.cargar_jugadores("Computadora", 1);
-            //Creamos la instancia de la clase ComputadoraIA
             CPU = true;
+            //Creamos la instancia de la clase ComputadoraIA
             inteligencia = new ComputadoraIA();
         }
         tipo = jugadores;
@@ -87,7 +75,7 @@ public class frmTablero extends javax.swing.JFrame {
         this.lb_ganados2.setText("Ganados: " + jugador2.ganadas);
         this.lb_perdidos2.setText("Perdidos: " + jugador2.perdidas);
         this.lb_empatados2.setText("Empatados: " + jugador2.empates);
-
+        //establece el turno del jugador en el tablero 
         if (turno == 1) {
             lb_inicia.setText("Turno de " + jugador1.nombre);
         } else {
@@ -103,11 +91,12 @@ public class frmTablero extends javax.swing.JFrame {
      * @param ficha
      */
     private void movimiento(int ficha) {
-        //Colocamos la fichasde de jugadores
+        /*Colocamos la fichasde de jugadores*/
         if (!terminado) {
             //Reproducimos el sonido
             sonido.sonidoFicha();
             PonerFicha(ficha, turno - 1);
+
             //si la computadora juega o no
             if (CPU == true && turno == 2) {
                 PonerFicha(inteligencia.movimiento(tablero), turno - 1);
@@ -116,7 +105,7 @@ public class frmTablero extends javax.swing.JFrame {
             }
         }
 
-        //Comenzar un juego nuevo
+        /*Comenzar un juego nuevo si el juego termino*/
         if (terminado) {
             reiniciarJuego();
             if (coneccion.ExistePartidas()) {
@@ -125,11 +114,11 @@ public class frmTablero extends javax.swing.JFrame {
             return;
         }
 
-        //Pregunta si el juego termino o si un jugador ha ganado
+        /*Pregunta si el juego termino o si un jugador ha ganado*/
         if (terminado() != 0) {
             //Sonido
             sonido.sonidoGano();
-            //resultados
+            //Actualizamos la informacion de jugador 
             if (terminado() == 1) {
                 jugador1.gano();
                 coneccion.actualizar_jugador(jugador1);
@@ -152,7 +141,7 @@ public class frmTablero extends javax.swing.JFrame {
             //Detenemos el juego
             terminado = true;
             empate = false;
-            //si nadie gana envia resultados de empate para ambos jugadore
+            //Verifica si el tablero esta lleno para establecer un empate
         } else if (lleno()) {
             jugador1.empato();
             coneccion.actualizar_jugador(jugador1);
@@ -165,30 +154,31 @@ public class frmTablero extends javax.swing.JFrame {
             terminado = true;
             empate = true;
         }
+        //muestra informacion
         mostrarInformacion();
     }
 
     /**
      * Metodo Verifica si la casilla esta ocupada la casilla seleccionada
+     * retornando el estado true o false
      *
      * @param casilla
      * @return
      */
     private boolean estaOcupada(int casilla) {
-        if (tablero[casilla] != 0) {
-            return true;
-        }
-        return false;
+        return tablero[casilla] != 0;
     }
 
     /**
-     * Metodo que verifica si el juego tiene una linea completa
+     * Metodo que verifica si el juego tiene una linea completa y muestra una
+     * linea ubicando el gane Si una linea esta completa retorna el numero de la
+     * linea
      *
      * @return
      */
     private int terminado() {
         /*Comprobamos si el juego terminó.*/
-        //Filas
+ /*Filas*/
         if (tablero[0] == tablero[1] && tablero[0] == tablero[2] && tablero[0] != 0) {
             lb_raya.setIcon(imagen.fichas(4));
             return tablero[0];
@@ -198,8 +188,7 @@ public class frmTablero extends javax.swing.JFrame {
         } else if (tablero[6] == tablero[7] && tablero[6] == tablero[8] && tablero[6] != 0) {
             lb_raya.setIcon(imagen.fichas(6));
             return tablero[6];
-        } //Columnas 
-        else if (tablero[0] == tablero[3] && tablero[0] == tablero[6] && tablero[0] != 0) {
+        } /*Columnas*/ else if (tablero[0] == tablero[3] && tablero[0] == tablero[6] && tablero[0] != 0) {
             lb_raya.setIcon(imagen.fichas(7));
             return tablero[0];
         } else if (tablero[1] == tablero[4] && tablero[1] == tablero[7] && tablero[1] != 0) {
@@ -208,8 +197,7 @@ public class frmTablero extends javax.swing.JFrame {
         } else if (tablero[2] == tablero[5] && tablero[2] == tablero[8] && tablero[2] != 0) {
             lb_raya.setIcon(imagen.fichas(9));
             return tablero[2];
-        } //Diagonales 
-        else if (tablero[0] == tablero[4] && tablero[0] == tablero[8] && tablero[0] != 0) {
+        } /*Diagonales*/ else if (tablero[0] == tablero[4] && tablero[0] == tablero[8] && tablero[0] != 0) {
             lb_raya.setIcon(imagen.fichas(2));
             return tablero[0];
         } else if (tablero[2] == tablero[4] && tablero[2] == tablero[6] && tablero[2] != 0) {
@@ -220,7 +208,8 @@ public class frmTablero extends javax.swing.JFrame {
     }
 
     /**
-     * verifica si el arreglo del tablero esta vacio
+     * verifica si el arreglo del tablero esta vacio, retorna un false o true
+     * segun se estado
      *
      * @return
      */
@@ -235,47 +224,19 @@ public class frmTablero extends javax.swing.JFrame {
     }
 
     /**
-     * Metodo que muestra imagen en el label segun el cual fue seleccionado y
-     * segun el jugador que lo selecciono
+     * Metodo verifica si el campo esta ocupado sino para poner imagen y seguir
+     * el juego
      *
      * @param indice
      */
     private void PonerFicha(int ficha, int jugador) {
-
+        /*Verifica si el campo del tablero esta ocupado*/
         if (estaOcupada(ficha)) {
             return;
         }
-
-        switch (ficha) {
-            case 0:
-                c1.setIcon(imagen.fichas(jugador));
-                break;
-            case 1:
-                c2.setIcon(imagen.fichas(jugador));
-                break;
-            case 2:
-                c3.setIcon(imagen.fichas(jugador));
-                break;
-            case 3:
-                c4.setIcon(imagen.fichas(jugador));
-                break;
-            case 4:
-                c5.setIcon(imagen.fichas(jugador));
-                break;
-            case 5:
-                c6.setIcon(imagen.fichas(jugador));
-                break;
-            case 6:
-                c7.setIcon(imagen.fichas(jugador));
-                break;
-            case 7:
-                c8.setIcon(imagen.fichas(jugador));
-                break;
-            case 8:
-                c9.setIcon(imagen.fichas(jugador));
-                break;
-        }
-        //Cambiamos el turno
+        /*Importa la imagen segun la casilla seleccionada*/
+        CargarFicha(ficha, jugador);
+        /*Cambiamos el turno*/
         if (1 == turno) {
             tablero[ficha] = 1;
             turno = 2;
@@ -327,8 +288,7 @@ public class frmTablero extends javax.swing.JFrame {
      * Método que inicia un nuevo juego
      */
     private void reiniciarJuego() {
-
-        //cambiar turno si es un empate
+        /*cambiar turno si es un empate*/
         if (CPU == false) {
             if (empate != true) {
                 if (1 == turno) {
@@ -337,13 +297,13 @@ public class frmTablero extends javax.swing.JFrame {
                     turno = 1;
                 }
             }
+            //Contra la Computadora
         } else {
             turno = 1;
         }
-
-        //Llena el tablero con 0
+        /*Llena el tablero con 0*/
         Arrays.fill(tablero, 0);
-        //Limpiar imagenes de los label
+        /*Limpiar imagenes de los label*/
         c1.setIcon(null);
         c2.setIcon(null);
         c3.setIcon(null);
@@ -386,6 +346,8 @@ public class frmTablero extends javax.swing.JFrame {
                     CargarFicha(x, opciones[x] - 1);
                 }
             }
+            primero = resultados.getInt("ganadas");
+            segundo = resultados.getInt("ganadas2");
             turno = resultados.getInt("turno");
             iniciarJuego(resultados.getString("nick_jugador1"), resultados.getString("nick_jugador2"), resultados.getInt("tipo"));
 
@@ -405,11 +367,6 @@ public class frmTablero extends javax.swing.JFrame {
         lb_Bvolumen.setVisible(false);
     }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -452,6 +409,7 @@ public class frmTablero extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("GATO");
+        setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         panel_UJugador.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Jugador 1"));
@@ -719,7 +677,11 @@ public class frmTablero extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    /**
+     * Label del Juego para X o O
+     *
+     * @param evt
+     */
     private void c1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_c1MouseClicked
         movimiento(0);
     }//GEN-LAST:event_c1MouseClicked
@@ -757,17 +719,19 @@ public class frmTablero extends javax.swing.JFrame {
     }//GEN-LAST:event_c9MouseClicked
 
     /**
-     * Hace el formulario invisible y activa el boton para continuar
+     * Si el Juego no ha termino se guarda en la base de datos si no solo sale y
+     * muestra quien gano
      *
      * @param evt
      */
     private void btn_SalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_SalirActionPerformed
         //Verifica si el juego termino
         if (!terminado) {
+            //Si no termino verifica si en la base de datos existe una para crear un registro o actualizar
             if (coneccion.ExistePartidas()) {
                 coneccion.ActualizarTabla(turno, tablero);
             } else {
-                coneccion.insertar_tabla(jugador1.nombre, jugador2.nombre, turno, tipo, tablero);
+                coneccion.insertar_tabla(jugador1.nombre, jugador2.nombre, turno, tipo, tablero, primero, segundo);
             }
             JOptionPane.showMessageDialog(null, "Su partida sera Guardada si deseas continuar", "Informativo", JOptionPane.INFORMATION_MESSAGE);
         } else {
@@ -782,7 +746,11 @@ public class frmTablero extends javax.swing.JFrame {
         menu.show();
     }//GEN-LAST:event_btn_SalirActionPerformed
 
-
+    /**
+     * Label q Habilita el sonido
+     *
+     * @param evt
+     */
     private void lb_AvolumenMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lb_AvolumenMouseClicked
         //silencia el sonido
         sonido.silencio = true;
@@ -791,6 +759,11 @@ public class frmTablero extends javax.swing.JFrame {
         lb_Bvolumen.setVisible(true);
     }//GEN-LAST:event_lb_AvolumenMouseClicked
 
+    /**
+     * Label q Deshabilita el sonido
+     *
+     * @param evt
+     */
     private void lb_BvolumenMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lb_BvolumenMouseClicked
         //activa el sonido
         sonido.silencio = false;

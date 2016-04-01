@@ -1,6 +1,12 @@
 package proyecto_analisesydiseño;
 
+/**
+ * Importacion para importar imagenes
+ */
 import javax.swing.ImageIcon;
+/**
+ * Importacion para avisos de errores
+ */
 import javax.swing.JOptionPane;
 
 /**
@@ -10,12 +16,9 @@ import javax.swing.JOptionPane;
  */
 public class frmJugador extends javax.swing.JFrame {
 
-//Instancia para conectar a base de datos
-    BaseDatos coneccion = Proyecto_AnalisesyDiseño.coneccion;
-    //Variable el cual guarda los nombres de los jugadores
-    public String jugador1, jugador2;
-    //Varible que establece cuantos jugadores van a jugar
-    public int jugadores;
+    BaseDatos coneccion = Proyecto_AnalisesyDiseño.coneccion; //Instancia para conectar a base de datos
+    public String jugador1, jugador2; //Variable el cual guarda los nombres de los jugadores
+    public int jugadores; //Varible que establece cuantos jugadores van a jugar
 
     /**
      * Costructor del formulario
@@ -106,6 +109,7 @@ public class frmJugador extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("JUGADOR(ES)");
+        setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         getContentPane().add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 213, 355, 10));
 
@@ -151,6 +155,13 @@ public class frmJugador extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Evento del boton de aceptar el cual inicializa el juego y abre el
+     * frmTablero segun sus datos ingresados para inicializar sobre 1 o 2
+     * jugadores
+     *
+     * @param evt
+     */
     private void btn_aceptaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_aceptaActionPerformed
         //si comprobacion es true abre form de tablero
         if (comprobar()) {
@@ -159,7 +170,9 @@ public class frmJugador extends javax.swing.JFrame {
             int dos = (int) (Math.random() * 7);
             //instancia al juego frmTablero
             frmTablero tablero = new frmTablero();
+            //Dos Jugadores
             if (jugadores == 2) {
+                //verifica quien saco el random o numero mayor para establecerlo como primero X y segundo O
                 if (uno > dos) {
                     tablero.iniciarJuego(jugador1, jugador2, jugadores);
                     JOptionPane.showMessageDialog(null, "A jugar !!!", "Juego", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(getClass().getResource("/Imagenes/primero.png")));
@@ -167,15 +180,13 @@ public class frmJugador extends javax.swing.JFrame {
                     tablero.iniciarJuego(jugador2, jugador1, jugadores);
                     JOptionPane.showMessageDialog(null, "A jugar !!!", "Juego", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(getClass().getResource("/Imagenes/segundo.png")));
                 }
+                //Un Jugador
             } else {
                 tablero.iniciarJuego(jugador1, jugador2, jugadores);
                 JOptionPane.showMessageDialog(null, "A jugar !!!", "Informativo", JOptionPane.INFORMATION_MESSAGE);
             }
-            
-            coneccion.EliminarPartida();
-            coneccion.EliminarJugador("Computadora");
-
-            //Elimina partidas y nick de computadora si comienza partida          
+            coneccion.EliminarPartida();//Elimina Partidas Guardadas
+            coneccion.EliminarJugador("Computadora");//Elimina la Computadora de la base de datos   
             tablero.show();
             this.dispose();
         }

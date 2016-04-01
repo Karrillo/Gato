@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package proyecto_analisesydiseño;
 
 /**
@@ -37,7 +32,6 @@ public class BaseDatos {
     public void conectar() {
         try {
             Class.forName(driver);
-            //Hacemos la coneccion.
             Connection conn = DriverManager.getConnection(connectString, user, password);
         } //Si se produce una Excepcion y no nos podemos conectar, muestra el sgte. mensaje.
         catch (ClassNotFoundException e) {
@@ -49,8 +43,8 @@ public class BaseDatos {
     }
 
     /**
-     * Busca un nick igual en la base de datos para restaurar datos si inicia
-     * otro juego
+     * Busca un nick igual en la base de datos, si la encuentra retorna un true
+     * si no un false y crea un nuevo registro
      *
      * @param jugador
      * @param tipo
@@ -73,7 +67,8 @@ public class BaseDatos {
     }
 
     /**
-     * Restaura los datos de un jugador ya ingresado en la base de datos
+     * Restaura los datos de un jugador ya ingresado en la base de datos y
+     * retorna un objeto jugador con sus respectivos datos
      *
      * @param jugador
      * @param tipo
@@ -102,7 +97,9 @@ public class BaseDatos {
     }
 
     /**
-     * Cargar los datos en la base de datos de un usuario nuevo
+     * Metodo el cual carga los datos de persona Si el jugador es encontrado
+     * retorna los datos para restaurar Si el jugador no es contrado retorna un
+     * jugador nuevo
      *
      * @param jugador
      * @param tipo
@@ -140,7 +137,7 @@ public class BaseDatos {
     }
 
     /**
-     * Metodo que elimina un usuario por su nick
+     * Metodo que elimina un usuario por su nombre
      *
      * @param nick
      */
@@ -180,20 +177,21 @@ public class BaseDatos {
      * @param tipo
      * @param tabla
      */
-    public void insertar_tabla(String jugador1, String Jugador2, int turno, int tipo, int[] tabla) {
+    public void insertar_tabla(String jugador1, String Jugador2, int turno, int tipo, int[] tabla, int ganadas, int ganadas2) {
         try {
             Connection conne = (Connection) DriverManager.getConnection(connectString, user, password);
             Statement consulta = (Statement) conne.createStatement();
-            consulta.executeUpdate("insert into schgato.partidas(tipo,nick_jugador1,nick_jugador2,turno,tabla) "
+            consulta.executeUpdate("insert into schgato.partidas(tipo,nick_jugador1,nick_jugador2,turno,tabla,ganadas,ganadas2) "
                     + "values(" + tipo + ",'" + jugador1 + "','" + Jugador2 + "'," + turno + ",'{" + tabla[0] + "," + tabla[1] + ","
-                    + tabla[2] + "," + tabla[3] + "," + tabla[4] + "," + tabla[5] + "," + tabla[6] + "," + tabla[7] + "," + tabla[8] + "}')");
+                    + tabla[2] + "," + tabla[3] + "," + tabla[4] + "," + tabla[5] + "," + tabla[6] + "," + tabla[7] + "," + tabla[8] + "}'," + ganadas + "," + ganadas2 + ")");
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Se ha producido un error en la conexion a la base de datos! " + e.getMessage());
         }
     }
 
     /**
-     * Restaurar los datos de un juego aun no terminado
+     * Restaurar los datos de un juego aun no terminado retornando un el
+     * registro o fila de la tabla
      *
      * @return
      */
@@ -214,7 +212,8 @@ public class BaseDatos {
     }
 
     /**
-     * Verifica si hay una partida aun no terminada en la base de datos
+     * Verifica si hay una partida aun no terminada en la base de datos Si la
+     * encuentra retorna un true, y si no la encuentra un false
      *
      * @return
      */
@@ -266,7 +265,7 @@ public class BaseDatos {
 
     /**
      * Metodo el cual consulta los datos de los jugadores para mostrarlos en las
-     * estadisticas
+     * estadisticas de los juggadores y retornando las filas de la db
      *
      * @param tipo
      * @return

@@ -5,7 +5,6 @@
  */
 package proyecto_analisesydiseño;
 
-
 /**
  *
  * @author Jose Miguel Rojas Guerrero
@@ -13,13 +12,11 @@ package proyecto_analisesydiseño;
  */
 public class Jugador {
 
-    //nombre de usuario
-    public String nombre;
-    //record para partidas ganadas, perdidas y empates
-    public int tipo,ganadas, perdidas, empates;
-    
+    public String nombre;//nombre de usuario
+    public int tipo, ganadas, perdidas, empates;//record para partidas ganadas, perdidas y empates
+
     /**
-     * crea un nuevo Jugador
+     * Crea un nuevo Jugador
      *
      * @param nombre
      */
@@ -30,15 +27,14 @@ public class Jugador {
         perdidas = 0;
         empates = 0;
     }
+
     /**
      * constructor vacio
-     *
-     * 
      */
     public Jugador() {
     }
-    
-    
+
+    /*Metodos de Get y Set de variables para Jugador*/
     public String getNombre() {
         return nombre;
     }

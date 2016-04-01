@@ -6,15 +6,18 @@
 package proyecto_analisesydiseño;
 
 /**
+ * 11/03/2016 al 31/03/2016
  *
  * @author Jose Miguel Rojas Guerrero
  * @author Jose Carrillo Mendez
  */
 public class Proyecto_AnalisesyDiseño {
+
     //conexion a la base de datos unica
     public static BaseDatos coneccion = new BaseDatos();
+
     /**
-     * Instancia el frmMenu para abrir formulario
+     * Instancia el frmMenu para abrir formulario principal
      *
      * @param args the command line arguments
      */

@@ -5,6 +5,9 @@
  */
 package proyecto_analisesydiseño;
 
+/**
+ * importacion el cual es para importacion de imagenes
+ */
 import java.applet.AudioClip;
 
 /**
@@ -12,12 +15,11 @@ import java.applet.AudioClip;
  * @author Jose Miguel Rojas Guerrero
  * @author Jose Carrillo Mendez
  */
+
 public class Sonidos {
 
-    //Crea objero de AudioClip para el sonido
-    AudioClip sonido;
-    //Variable para saber si esta en silencio 
-    boolean silencio = false;
+    AudioClip sonido;//Crea objero de AudioClip para el sonido
+    boolean silencio = false;//Variable para saber si esta en silencio 
 
     /**
      * Constructor Vacio

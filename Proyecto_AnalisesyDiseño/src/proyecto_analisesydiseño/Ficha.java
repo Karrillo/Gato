@@ -5,6 +5,9 @@
  */
 package proyecto_analisesydiseño;
 
+/**
+ * importacion el cual es para importacion de imagenes
+ */
 import javax.swing.ImageIcon;
 
 /**
@@ -14,15 +17,15 @@ import javax.swing.ImageIcon;
  */
 public class Ficha {
 
-    //Arreglo de ImagenIcon el cual contiene las figuras del tablero
-    ImageIcon[] fichas = new ImageIcon[12];
+    ImageIcon[] fichas = new ImageIcon[12]; //Arreglo de ImagenIcon el cual contiene las figuras del tablero
 
     /**
      * Constructor e inicializacion de Ficha
      */
     public Ficha() {
-        fichas[0] = new ImageIcon(getClass().getResource("/Imagenes/cruz.png"));
-        fichas[1] = new ImageIcon(getClass().getResource("/Imagenes/circulo.png"));
+        fichas[0] = new ImageIcon(getClass().getResource("/Imagenes/cruz.png"));//imagen de la X
+        fichas[1] = new ImageIcon(getClass().getResource("/Imagenes/circulo.png"));//imagen de la O
+        //imagenes de las rayas de ganadas
         fichas[2] = new ImageIcon(getClass().getResource("/Imagenes/raya1.png"));
         fichas[3] = new ImageIcon(getClass().getResource("/Imagenes/raya2.png"));
         fichas[4] = new ImageIcon(getClass().getResource("/Imagenes/raya3.png"));
@@ -34,7 +37,7 @@ public class Ficha {
     }
 
     /**
-     * Metodo retorna la imagen el cual corresponda al jugador
+     * Metodo retorna la imagen guardada en el arreglo segun se le solicite
      *
      * @param numero
      * @return
